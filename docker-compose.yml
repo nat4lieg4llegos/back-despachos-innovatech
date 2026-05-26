@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: backend-despachos
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_ENDPOINT=db
+      - DB_PORT=3306
+      - DB_NAME=db_despachos
+      - DB_USERNAME=root
+      - DB_PASSWORD=root1234
+    depends_on:
+      - db
+    networks:
+      - backend-net
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-despachos
+    environment:
+      - MYSQL_ROOT_PASSWORD=root1234
+      - MYSQL_DATABASE=db_despachos
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - backend-net
+
+volumes:
+  db_data:
+
+networks:
+  backend-net:
+    driver: bridge
