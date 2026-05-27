@@ -6,7 +6,7 @@ on:
       - deploy
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,23 +25,3 @@ jobs:
           context: .
           push: true
           tags: nosecomo/back-despachos-innovatech:latest
-
-      - name: Deploy en EC2
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_BACKEND_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            docker pull nosecomo/back-despachos-innovatech:latest
-            docker stop backend-despachos || true
-            docker rm backend-despachos || true
-            docker run -d \
-              --name backend-despachos \
-              -p 8081:8081 \
-              -e DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} \
-              -e DB_PORT=3306 \
-              -e DB_NAME=db_despachos \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              nosecomo/back-despachos-innovatech:latest
